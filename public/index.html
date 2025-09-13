@@ -1,1107 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hospital Management System - Appointments</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --accent: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background-color: var(--primary);
-        }
-        
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            border: none;
-        }
-        
-        .card-header {
-            background-color: var(--secondary);
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary);
-            border-color: var(--secondary);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .section {
-            display: none;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .active-section {
-            display: block;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-        }
-        
-        .nav-tabs .nav-link {
-            color: var(--dark);
-        }
-        
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        
-        .status-pending {
-            background-color: var(--warning);
-            color: white;
-        }
-        
-        .status-approved {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .status-denied {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .status-completed {
-            background-color: var(--secondary);
-            color: white;
-        }
-        
-        .user-role {
-            padding: 3px 8px;
-            border-radius: 15px;
-            background-color: var(--primary);
-            color: white;
-            font-size: 0.75rem;
-            margin-left: 10px;
-        }
-        
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            background: white;
-        }
-        
-        .dashboard-card {
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
-        
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .record-file {
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        
-        .appointment-card {
-            border-left: 4px solid var(--warning);
-            margin-bottom: 15px;
-        }
-        
-        .appointment-card.approved {
-            border-left-color: var(--success);
-        }
-        
-        .appointment-card.denied {
-            border-left-color: var(--danger);
-        }
-        
-        .appointment-card.completed {
-            border-left-color: var(--secondary);
-        }
-        
-        #calendar {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .fc-event {
-            cursor: pointer;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-hospital me-2"></i>MediCare System
-            </a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text me-3" id="userInfo"></span>
-                <button class="btn btn-outline-light btn-sm" id="logoutBtn">Logout</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container" id="mainApp">
-        <!-- Login Section -->
-        <div class="login-container" id="loginSection">
-            <h2 class="text-center mb-4">Login to Your Account</h2>
+    <div class="container">
+        <header class="header">
+            <h1>Hospital Management System</h1>
+            <div id="userInfo" class="hidden"></div>
+        </header>
+        
+        <!-- Login Form -->
+        <section id="loginSection" class="form-section">
+            <h2>Login</h2>
             <form id="loginForm">
-                <div class="mb-3">
-                    <label for="loginUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="loginUsername" required>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="username" required>
                 </div>
-                <div class="mb-3">
-                    <label for="loginPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="loginPassword" required>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <div class="form-actions">
+                    <button type="submit">Login</button>
+                    <button type="button" onclick="showRegister()">Register</button>
+                </div>
             </form>
-            <p class="text-center mt-3">
-                Don't have an account? <a href="#" id="showRegister">Register here</a>
-            </p>
-            <div id="loginResult" class="mt-3"></div>
-        </div>
-
-        <!-- Register Section -->
-        <div class="login-container" id="registerSection" style="display: none;">
-            <h2 class="text-center mb-4">Create an Account</h2>
+            <div id="loginMessage"></div>
+        </section>
+        
+        <!-- Register Form -->
+        <section id="registerSection" class="form-section hidden">
+            <h2>Register</h2>
+            <!-- In your index.html file, update the registration form -->
             <form id="registerForm">
-                <div class="mb-3">
-                    <label for="regUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="regUsername" required>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="regUsername" required>
                 </div>
-                <div class="mb-3">
-                    <label for="regPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="regPassword" required>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="regEmail" required>
                 </div>
-                <div class="mb-3">
-                    <label for="regRole" class="form-label">Role</label>
-                    <select class="form-select" id="regRole">
+                <div class="form-group">
+                    <label>Full Name:</label>
+                    <input type="text" id="regName">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Role:</label>
+                    <select id="regRole" required onchange="toggleRoleFields()">
                         <option value="patient">Patient</option>
                         <option value="doctor">Doctor</option>
                         <option value="nurse">Nurse</option>
                         <option value="pharmacist">Pharmacist</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <!-- Conditional fields for doctor -->
+                <div id="doctorFields" class="hidden">
+                    <div class="form-group">
+                        <label>Specialty:</label>
+                        <input type="text" id="regSpecialty">
+                    </div>
+                    <div class="form-group">
+                        <label>License Number:</label>
+                        <input type="text" id="regLicense">
+                    </div>
+                </div>
+                <!-- Conditional fields for pharmacist -->
+                <div id="pharmacistFields" class="hidden">
+                    <div class="form-group">
+                        <label>License Number:</label>
+                        <input type="text" id="regLicensePharm">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Register</button>
+                    <button type="button" onclick="showLogin()">Back to Login</button>
+                </div>
             </form>
-            <p class="text-center mt-3">
-                Already have an account? <a href="#" id="showLogin">Login here</a>
-            </p>
-            <div id="registerResult" class="mt-3"></div>
-        </div>
-
-        <!-- Dashboard Section (shown after login) -->
-        <div id="dashboardSection" style="display: none;">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h5 id="userRoleDisplay" class="card-title"></h5>
-                            <h6 id="userNameDisplay" class="card-subtitle mb-2 text-muted"></h6>
-                        </div>
+            <div id="registerMessage"></div>
+        </section>
+        
+        <!-- Dashboard -->
+        <main id="dashboardSection" class="hidden">
+            <nav class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('appointments')">Appointments</button>
+                <button class="nav-tab" onclick="showTab('records')">Records</button>
+                <button class="nav-tab" id="inventoryTab" onclick="showTab('inventory')" style="display:none">Inventory</button>
+                <button class="nav-tab" id="prescriptionsTab" onclick="showTab('prescriptions')" style="display:none">Prescriptions</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </nav>
+            
+            <!-- Appointments Tab -->
+            <article id="appointmentsContent" class="tab-content">
+                <div class="card">
+                    <h3>Appointments</h3>
+                    
+                    <!-- Create Appointment (Patient only) -->
+                    <div id="createAppointment" class="hidden">
+                        <h4>Book New Appointment</h4>
+                        <form id="appointmentForm">
+                            <div class="form-group">
+                                <label>Doctor:</label>
+                                <select id="doctorId" required>
+                                    <option value="">Select Doctor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date & Time:</label>
+                                <input type="datetime-local" id="appointmentDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Reason:</label>
+                                <textarea id="appointmentReason" rows="3" required></textarea>
+                            </div>
+                            <button type="submit">Book Appointment</button>
+                        </form>
                     </div>
                     
-                    <div class="list-group mt-4">
-                        <a href="#" class="list-group-item list-group-item-action active" data-section="dashboard">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" data-section="appointments">
-                            <i class="fas fa-calendar-check me-2"></i>Appointments
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" data-section="doctorCalendar" id="doctorCalendarLink" style="display: none;">
-                            <i class="fas fa-calendar-alt me-2"></i>Doctor Calendar
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" data-section="nurseApproval" id="nurseApprovalLink" style="display: none;">
-                            <i class="fas fa-clipboard-check me-2"></i>Approve Appointments
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" data-section="records">
-                            <i class="fas fa-file-medical me-2"></i>Medical Records
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" data-section="uploadRecord" id="uploadRecordLink" style="display: none;">
-                            <i class="fas fa-upload me-2"></i>Upload Record
-                        </a>
-                    </div>
+                    <div id="appointmentsList"></div>
                 </div>
-                
-                <div class="col-md-9">
-                    <!-- Dashboard Content -->
-                    <div class="section active-section" id="dashboardContent">
-                        <h3>Dashboard</h3>
-                        <div class="row" id="functionalityCards"></div>
+            </article>
+            
+            <!-- Records Tab -->
+            <article id="recordsContent" class="tab-content hidden">
+                <div class="card">
+                    <h3>Medical Records</h3>
+                    
+                    <!-- Upload Record (Doctor only) -->
+                    <div id="uploadRecord" class="hidden">
+                        <h4>Upload New Record</h4>
+                        <form id="recordForm">
+                            <div class="form-group">
+                                <label>Patient:</label>
+                                <select id="recordPatientId" required>
+                                    <option value="">Select Patient</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description:</label>
+                                <textarea id="recordDescription" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>File:</label>
+                                <input type="file" id="recordFile">
+                            </div>
+                            <button type="submit">Upload Record</button>
+                        </form>
                     </div>
                     
-                    <!-- Appointments Content -->
-                    <div class="section" id="appointmentsContent">
-                        <h3>Appointments</h3>
-                        
-                        <!-- Create Appointment (for patients) -->
-                        <div class="card mb-4" id="createAppointmentCard" style="display: none;">
-                            <div class="card-header">
-                                <h5 class="mb-0">Request New Appointment</h5>
-                            </div>
-                            <div class="card-body">
-                                <form id="appointmentForm">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="doctorId" class="form-label">Doctor</label>
-                                            <select class="form-select" id="doctorId" required>
-                                                <option value="">Select a doctor</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="date" class="form-label">Preferred Date & Time</label>
-                                            <input type="datetime-local" class="form-control" id="date" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="reason" class="form-label">Reason for Appointment</label>
-                                        <textarea class="form-control" id="reason" rows="3" required></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Request Appointment</button>
-                                </form>
-                                <div id="appointmentResult" class="mt-3"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Appointments List -->
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">My Appointments</h5>
-                                <button class="btn btn-sm btn-outline-primary" id="refreshAppointments">
-                                    <i class="fas fa-sync-alt"></i> Refresh
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <div id="appointmentsList">
-                                    <!-- Appointments will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Doctor Calendar Content -->
-                    <div class="section" id="doctorCalendarContent">
-                        <h3>Doctor's Appointment Calendar</h3>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">My Schedule</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="calendar"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Nurse Approval Content -->
-                    <div class="section" id="nurseApprovalContent">
-                        <h3>Appointment Approval</h3>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Pending Appointment Requests</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="pendingAppointmentsList">
-                                    <!-- Pending appointments will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Records Content -->
-                    <div class="section" id="recordsContent">
-                        <h3>Medical Records</h3>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">My Medical Records</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover" id="recordsTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Doctor</th>
-                                                <th>Description</th>
-                                                <th>File</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="recordsList">
-                                            <!-- Records will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Upload Record Content (for doctors) -->
-                    <div class="section" id="uploadRecordContent">
-                        <h3>Upload Medical Record</h3>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Upload New Record</h5>
-                            </div>
-                            <div class="card-body">
-                                <form id="recordForm">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="patientId" class="form-label">Patient</label>
-                                            <select class="form-select" id="patientId" required>
-                                                <option value="">Select a patient</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="recordDate" class="form-label">Date</label>
-                                            <input type="date" class="form-control" id="recordDate" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" id="description" rows="3" required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="file" class="form-label">File (optional)</label>
-                                        <input type="file" class="form-control" id="file">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Upload Record</button>
-                                </form>
-                                <div id="recordResult" class="mt-3"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="recordsList"></div>
                 </div>
-            </div>
-        </div>
+            </article>
+            
+            <!-- Inventory Tab -->
+            <article id="inventoryContent" class="tab-content hidden">
+                <div class="card">
+                    <h3>Medicine Inventory</h3>
+                    <div id="inventoryList"></div>
+                </div>
+            </article>
+            
+            <!-- Prescriptions Tab -->
+            <article id="prescriptionsContent" class="tab-content hidden">
+                <div class="card">
+                    <h3>Prescriptions</h3>
+                    <div id="prescriptionsList"></div>
+                </div>
+            </article>
+        </main>
     </div>
 
-    <!-- Appointment Details Modal -->
-    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Appointment Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Patient:</strong> <span id="modalPatient"></span></p>
-                    <p><strong>Date & Time:</strong> <span id="modalDateTime"></span></p>
-                    <p><strong>Reason:</strong> <span id="modalReason"></span></p>
-                    <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="completeAppointmentBtn" style="display: none;">Mark as Completed</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script>
-        // Global variables
-        let token = "";
-        let currentUser = null;
-        let calendar = null;
-        
-        // DOM elements
-        const loginSection = document.getElementById('loginSection');
-        const registerSection = document.getElementById('registerSection');
-        const dashboardSection = document.getElementById('dashboardSection');
-        const userInfo = document.getElementById('userInfo');
-        const userNameDisplay = document.getElementById('userNameDisplay');
-        const userRoleDisplay = document.getElementById('userRoleDisplay');
-        const uploadRecordLink = document.getElementById('uploadRecordLink');
-        const createAppointmentCard = document.getElementById('createAppointmentCard');
-        const doctorCalendarLink = document.getElementById('doctorCalendarLink');
-        const nurseApprovalLink = document.getElementById('nurseApprovalLink');
-        
-        // Show/hide sections
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active-section');
-            });
-            document.getElementById(sectionId).classList.add('active-section');
-            
-            // Load data when switching to specific sections
-            if (sectionId === 'appointmentsContent') {
-                loadAppointments();
-                loadDoctors(); // For appointment creation
-            } else if (sectionId === 'recordsContent') {
-                loadRecords();
-            } else if (sectionId === 'uploadRecordContent') {
-                loadPatients(); // For record upload
-            } else if (sectionId === 'nurseApprovalContent') {
-                loadPendingAppointments();
-            } else if (sectionId === 'doctorCalendarContent') {
-                initializeCalendar();
-            }
-        }
-        
-        // Event listeners for navigation
-        document.querySelectorAll('[data-section]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const section = this.getAttribute('data-section');
-                showSection(section + 'Content');
-            });
-        });
-        
-        // Toggle between login and register
-        document.getElementById('showRegister').addEventListener('click', function(e) {
-            e.preventDefault();
-            loginSection.style.display = 'none';
-            registerSection.style.display = 'block';
-        });
-        
-        document.getElementById('showLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            registerSection.style.display = 'none';
-            loginSection.style.display = 'block';
-        });
-        
-        // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            token = "";
-            currentUser = null;
-            dashboardSection.style.display = 'none';
-            loginSection.style.display = 'block';
-            registerSection.style.display = 'none';
-        });
-        
-        // Register form submission
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('regUsername').value;
-            const password = document.getElementById('regPassword').value;
-            const role = document.getElementById('regRole').value;
-            
-            try {
-                const res = await fetch('http://localhost:5000/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, role })
-                });
-                
-                const text = await res.text();
-                document.getElementById('registerResult').innerHTML = `
-                    <div class="alert alert-success">${text}</div>
-                `;
-                
-                // Switch to login after successful registration
-                setTimeout(() => {
-                    registerSection.style.display = 'none';
-                    loginSection.style.display = 'block';
-                    document.getElementById('registerResult').innerHTML = '';
-                }, 2000);
-            } catch (error) {
-                document.getElementById('registerResult').innerHTML = `
-                    <div class="alert alert-danger">Registration failed: ${error.message}</div>
-                `;
-            }
-        });
-        
-        // Login form submission
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            try {
-                const res = await fetch('http://localhost:5000/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await res.json();
-                
-                if (data.token) {
-                    token = data.token;
-                    currentUser = { username, role: data.role };
-                    
-                    // Update UI
-                    userInfo.innerHTML = `Welcome, ${username} <span class="user-role">${data.role}</span>`;
-                    userNameDisplay.textContent = username;
-                    userRoleDisplay.textContent = data.role.charAt(0).toUpperCase() + data.role.slice(1);
-                    
-                    // Show/hide features based on role
-                    if (data.role === 'doctor') {
-                        uploadRecordLink.style.display = 'block';
-                        doctorCalendarLink.style.display = 'block';
-                    } else {
-                        uploadRecordLink.style.display = 'none';
-                        doctorCalendarLink.style.display = 'none';
-                    }
-                    
-                    if (data.role === 'patient') {
-                        createAppointmentCard.style.display = 'block';
-                    } else {
-                        createAppointmentCard.style.display = 'none';
-                    }
-                    
-                    if (data.role === 'nurse') {
-                        nurseApprovalLink.style.display = 'block';
-                    } else {
-                        nurseApprovalLink.style.display = 'none';
-                    }
-                    
-                    // Switch to dashboard
-                    loginSection.style.display = 'none';
-                    dashboardSection.style.display = 'block';
-                    
-                    // Load dashboard functionalities
-                    loadDashboardFunctionalities(data.role);
-                } else {
-                    document.getElementById('loginResult').innerHTML = `
-                        <div class="alert alert-danger">Login failed: ${data.error}</div>
-                    `;
-                }
-            } catch (error) {
-                document.getElementById('loginResult').innerHTML = `
-                    <div class="alert alert-danger">Login failed: ${error.message}</div>
-                `;
-            }
-        });
-        
-        // Load dashboard functionalities based on role
-        function loadDashboardFunctionalities(role) {
-            const functionalityCards = document.getElementById('functionalityCards');
-            functionalityCards.innerHTML = '';
-            
-            let functionalities = [];
-            if (role === 'doctor') {
-                functionalities = ["View Appointments", "View Patient History", "Upload Medical Records"];
-            } else if (role === 'nurse') {
-                functionalities = ["Approve Appointments", "Assist in Care", "View Patient Reports"];
-            } else if (role === 'patient') {
-                functionalities = ["Book Appointment", "View Medical History", "View Appointments"];
-            } else if (role === 'pharmacist') {
-                functionalities = ["Manage Medicine Inventory", "Process Prescriptions"];
-            }
-            
-            functionalities.forEach(func => {
-                functionalityCards.innerHTML += `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card dashboard-card">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">${func}</h5>
-                                <p class="card-text">Access this functionality to manage ${func.toLowerCase()}.</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        // Load doctors for appointment creation
-        async function loadDoctors() {
-            try {
-                // In a real application, you would fetch this from the server
-                // For demo purposes, we'll use a mock list
-                const doctorSelect = document.getElementById('doctorId');
-                doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
-                
-                // This would typically come from an API endpoint
-                const doctors = [
-                    { _id: 'doc1', username: 'Dr. Smith (Cardiologist)' },
-                    { _id: 'doc2', username: 'Dr. Johnson (Pediatrician)' },
-                    { _id: 'doc3', username: 'Dr. Williams (Neurologist)' }
-                ];
-                
-                doctors.forEach(doctor => {
-                    doctorSelect.innerHTML += `<option value="${doctor._id}">${doctor.username}</option>`;
-                });
-            } catch (error) {
-                console.error('Error loading doctors:', error);
-            }
-        }
-        
-        // Load patients for record upload
-        async function loadPatients() {
-            try {
-                // In a real application, you would fetch this from the server
-                const patientSelect = document.getElementById('patientId');
-                patientSelect.innerHTML = '<option value="">Select a patient</option>';
-                
-                // This would typically come from an API endpoint
-                const patients = [
-                    { _id: 'pat1', username: 'John Doe' },
-                    { _id: 'pat2', username: 'Jane Smith' },
-                    { _id: 'pat3', username: 'Robert Brown' }
-                ];
-                
-                patients.forEach(patient => {
-                    patientSelect.innerHTML += `<option value="${patient._id}">${patient.username}</option>`;
-                });
-            } catch (error) {
-                console.error('Error loading patients:', error);
-            }
-        }
-        
-        // Load appointments
-        async function loadAppointments() {
-            try {
-                const res = await fetch('http://localhost:5000/appointments', {
-                    method: 'GET',
-                    headers: { 'authorization': token }
-                });
-                
-                if (res.ok) {
-                    const appointments = await res.json();
-                    const appointmentsList = document.getElementById('appointmentsList');
-                    appointmentsList.innerHTML = '';
-                    
-                    if (appointments.length === 0) {
-                        appointmentsList.innerHTML = `
-                            <div class="text-center py-4">
-                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                                <p>No appointments found.</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    appointments.forEach(appt => {
-                        const date = new Date(appt.date).toLocaleString();
-                        const statusClass = `status-${appt.status || 'pending'}`;
-                        const cardClass = `appointment-card ${appt.status || 'pending'}`;
-                        
-                        appointmentsList.innerHTML += `
-                            <div class="${cardClass} card p-3">
-                                <div class="d-flex justify-content-between">
-                                    <h5>Appointment with ${appt.doctorId?.username || 'N/A'}</h5>
-                                    <span class="status-badge ${statusClass}">${appt.status || 'pending'}</span>
-                                </div>
-                                <p class="mb-1"><strong>Date & Time:</strong> ${date}</p>
-                                <p class="mb-1"><strong>Reason:</strong> ${appt.reason}</p>
-                                ${currentUser.role === 'patient' && appt.status === 'pending' ? `
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-danger" onclick="cancelAppointment('${appt._id}')">
-                                            <i class="fas fa-times"></i> Cancel Request
-                                        </button>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    });
-                } else {
-                    console.error('Failed to load appointments');
-                }
-            } catch (error) {
-                console.error('Error loading appointments:', error);
-            }
-        }
-        
-        // Load pending appointments for nurse approval
-        async function loadPendingAppointments() {
-            try {
-                const res = await fetch('http://localhost:5000/appointments', {
-                    method: 'GET',
-                    headers: { 'authorization': token }
-                });
-                
-                if (res.ok) {
-                    const appointments = await res.json();
-                    const pendingAppointmentsList = document.getElementById('pendingAppointmentsList');
-                    pendingAppointmentsList.innerHTML = '';
-                    
-                    // Filter pending appointments
-                    const pendingAppointments = appointments.filter(appt => appt.status === 'pending');
-                    
-                    if (pendingAppointments.length === 0) {
-                        pendingAppointmentsList.innerHTML = `
-                            <div class="text-center py-4">
-                                <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
-                                <p>No pending appointments for approval.</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    pendingAppointments.forEach(appt => {
-                        const date = new Date(appt.date).toLocaleString();
-                        
-                        pendingAppointmentsList.innerHTML += `
-                            <div class="appointment-card card p-3 mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <h5>Appointment Request</h5>
-                                    <span class="status-badge status-pending">pending</span>
-                                </div>
-                                <p class="mb-1"><strong>Patient:</strong> ${appt.patientId?.username || 'N/A'}</p>
-                                <p class="mb-1"><strong>Doctor:</strong> ${appt.doctorId?.username || 'N/A'}</p>
-                                <p class="mb-1"><strong>Date & Time:</strong> ${date}</p>
-                                <p class="mb-1"><strong>Reason:</strong> ${appt.reason}</p>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-success" onclick="approveAppointment('${appt._id}')">
-                                        <i class="fas fa-check"></i> Approve
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="denyAppointment('${appt._id}')">
-                                        <i class="fas fa-times"></i> Deny
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    console.error('Failed to load appointments');
-                }
-            } catch (error) {
-                console.error('Error loading appointments:', error);
-            }
-        }
-        
-        // Create appointment
-        document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const doctorId = document.getElementById('doctorId').value;
-            const date = document.getElementById('date').value;
-            const reason = document.getElementById('reason').value;
-            
-            try {
-                const res = await fetch('http://localhost:5000/appointments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'authorization': token
-                    },
-                    body: JSON.stringify({ doctorId, date, reason })
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    document.getElementById('appointmentResult').innerHTML = `
-                        <div class="alert alert-success">Appointment request submitted successfully. It will be reviewed by a nurse.</div>
-                    `;
-                    // Reset form
-                    document.getElementById('appointmentForm').reset();
-                    // Reload appointments
-                    loadAppointments();
-                } else {
-                    document.getElementById('appointmentResult').innerHTML = `
-                        <div class="alert alert-danger">${text}</div>
-                    `;
-                }
-            } catch (error) {
-                document.getElementById('appointmentResult').innerHTML = `
-                    <div class="alert alert-danger">Failed to create appointment: ${error.message}</div>
-                `;
-            }
-        });
-        
-        // Approve appointment (nurse only)
-        async function approveAppointment(appointmentId) {
-            try {
-                const res = await fetch(`http://localhost:5000/appointments/${appointmentId}/approve`, {
-                    method: 'PUT',
-                    headers: { 'authorization': token }
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    alert('Appointment approved successfully');
-                    loadPendingAppointments();
-                } else {
-                    alert(`Failed to approve appointment: ${text}`);
-                }
-            } catch (error) {
-                alert(`Failed to approve appointment: ${error.message}`);
-            }
-        }
-        
-        // Deny appointment (nurse only)
-        async function denyAppointment(appointmentId) {
-            if (!confirm('Are you sure you want to deny this appointment request?')) return;
-            
-            try {
-                const res = await fetch(`http://localhost:5000/appointments/${appointmentId}/deny`, {
-                    method: 'PUT',
-                    headers: { 'authorization': token }
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    alert('Appointment denied successfully');
-                    loadPendingAppointments();
-                } else {
-                    alert(`Failed to deny appointment: ${text}`);
-                }
-            } catch (error) {
-                alert(`Failed to deny appointment: ${error.message}`);
-            }
-        }
-        
-        // Cancel appointment (patient only)
-        async function cancelAppointment(appointmentId) {
-            if (!confirm('Are you sure you want to cancel this appointment request?')) return;
-            
-            try {
-                const res = await fetch(`http://localhost:5000/appointments/${appointmentId}`, {
-                    method: 'DELETE',
-                    headers: { 'authorization': token }
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    alert('Appointment cancelled successfully');
-                    loadAppointments();
-                } else {
-                    alert(`Failed to cancel appointment: ${text}`);
-                }
-            } catch (error) {
-                alert(`Failed to cancel appointment: ${error.message}`);
-            }
-        }
-        
-        // Initialize calendar for doctors
-        function initializeCalendar() {
-            const calendarEl = document.getElementById('calendar');
-            
-            if (calendar) {
-                calendar.destroy();
-            }
-            
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    // Fetch appointments from server
-                    fetch('http://localhost:5000/appointments', {
-                        method: 'GET',
-                        headers: { 'authorization': token }
-                    })
-                    .then(response => response.json())
-                    .then(appointments => {
-                        const events = appointments
-                            .filter(appt => appt.status === 'approved')
-                            .map(appt => ({
-                                title: `Appointment with ${appt.patientId?.username || 'Patient'}`,
-                                start: new Date(appt.date),
-                                extendedProps: {
-                                    appointment: appt
-                                }
-                            }));
-                        successCallback(events);
-                    })
-                    .catch(error => {
-                        failureCallback(error);
-                    });
-                },
-                eventClick: function(info) {
-                    const appointment = info.event.extendedProps.appointment;
-                    showAppointmentDetails(appointment);
-                }
-            });
-            
-            calendar.render();
-        }
-        
-        // Show appointment details in modal
-        function showAppointmentDetails(appointment) {
-            document.getElementById('modalPatient').textContent = appointment.patientId?.username || 'N/A';
-            document.getElementById('modalDateTime').textContent = new Date(appointment.date).toLocaleString();
-            document.getElementById('modalReason').textContent = appointment.reason;
-            document.getElementById('modalStatus').textContent = appointment.status || 'pending';
-            
-            // Show complete button for doctors
-            if (currentUser.role === 'doctor' && appointment.status === 'approved') {
-                document.getElementById('completeAppointmentBtn').style.display = 'block';
-                document.getElementById('completeAppointmentBtn').onclick = function() {
-                    completeAppointment(appointment._id);
-                };
-            } else {
-                document.getElementById('completeAppointmentBtn').style.display = 'none';
-            }
-            
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-            modal.show();
-        }
-        
-        // Complete appointment (doctor only)
-        async function completeAppointment(appointmentId) {
-            try {
-                const res = await fetch(`http://localhost:5000/appointments/${appointmentId}/complete`, {
-                    method: 'PUT',
-                    headers: { 'authorization': token }
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    alert('Appointment marked as completed');
-                    // Close modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-                    modal.hide();
-                    // Refresh calendar
-                    initializeCalendar();
-                } else {
-                    alert(`Failed to complete appointment: ${text}`);
-                }
-            } catch (error) {
-                alert(`Failed to complete appointment: ${error.message}`);
-            }
-        }
-        
-        // Load medical records
-        async function loadRecords() {
-            try {
-                const res = await fetch('http://localhost:5000/records', {
-                    method: 'GET',
-                    headers: { 'authorization': token }
-                });
-                
-                if (res.ok) {
-                    const records = await res.json();
-                    const recordsList = document.getElementById('recordsList');
-                    recordsList.innerHTML = '';
-                    
-                    if (records.length === 0) {
-                        recordsList.innerHTML = `
-                            <tr>
-                                <td colspan="4" class="text-center py-4">No medical records found.</td>
-                            </tr>
-                        `;
-                        return;
-                    }
-                    
-                    records.forEach(record => {
-                        const date = new Date(record.date).toLocaleDateString();
-                        
-                        recordsList.innerHTML += `
-                            <tr>
-                                <td>${date}</td>
-                                <td>${record.doctorId?.username || 'N/A'}</td>
-                                <td>${record.description}</td>
-                                <td>
-                                    ${record.fileUrl ? `
-                                        <a href="http://localhost:5000${record.fileUrl}" class="btn btn-sm btn-primary" target="_blank">
-                                            <i class="fas fa-download"></i> Download
-                                        </a>
-                                    `: 'No file'}
-                                </td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    console.error('Failed to load records');
-                }
-            } catch (error) {
-                console.error('Error loading records:', error);
-            }
-        }
-        
-        // Upload medical record
-        document.getElementById('recordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (currentUser.role !== 'doctor') {
-                document.getElementById('recordResult').innerHTML = `
-                    <div class="alert alert-danger">Only doctors can upload records.</div>
-                `;
-                return;
-            }
-            
-            const patientId = document.getElementById('patientId').value;
-            const description = document.getElementById('description').value;
-            const recordDate = document.getElementById('recordDate').value;
-            const fileInput = document.getElementById('file');
-            
-            const formData = new FormData();
-            formData.append('patientId', patientId);
-            formData.append('description', description);
-            formData.append('date', recordDate);
-            
-            if (fileInput.files.length > 0) {
-                formData.append('file', fileInput.files[0]);
-            }
-            
-            try {
-                const res = await fetch('http://localhost:5000/records', {
-                    method: 'POST',
-                    headers: { 'authorization': token },
-                    body: formData
-                });
-                
-                const text = await res.text();
-                
-                if (res.ok) {
-                    document.getElementById('recordResult').innerHTML = `
-                        <div class="alert alert-success">${text}</div>
-                    `;
-                    // Reset form
-                    document.getElementById('recordForm').reset();
-                } else {
-                    document.getElementById('recordResult').innerHTML = `
-                        <div class="alert alert-danger">${text}</div>
-                    `;
-                }
-            } catch (error) {
-                document.getElementById('recordResult').innerHTML = `
-                    <div class="alert alert-danger">Failed to upload record: ${error.message}</div>
-                `;
-            }
-        });
-        
-        // Refresh appointments
-        document.getElementById('refreshAppointments').addEventListener('click', function() {
-            loadAppointments();
-        });
-        
-        // Initialize date field for record upload to today's date
-        document.getElementById('recordDate').valueAsDate = new Date();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
